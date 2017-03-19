@@ -5,12 +5,12 @@ apply plugin: 'android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 
 def COMPILE_SDK_VERSION = 25
-def SUPPORT_V4_VERSION = "25.1.0"
-def SUPPORT_V7_VERSION = "25.1.0"
+def SUPPORT_V4_VERSION = "25.3.0"
+def SUPPORT_V7_VERSION = "25.3.0"
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION
-    buildToolsVersion "24.0.3"
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         minSdkVersion 16
