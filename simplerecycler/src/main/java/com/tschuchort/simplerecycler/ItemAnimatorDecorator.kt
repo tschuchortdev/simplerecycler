@@ -5,27 +5,63 @@ import android.support.v7.widget.RecyclerView.ItemAnimator
 import android.support.v7.widget.RecyclerView.ViewHolder
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Proxy
+import java.util.*
 
 /**
  * base class for decorating ItemAnimators
  * currently only supports decorating change animations
  */
 abstract class ItemAnimatorDecorator(val decorated: ItemAnimator) : ItemAnimator() {
-	init {
-		decorated.setAnimationsFinishedListener { holder -> dispatchAnimationFinished(holder) }
+
+	// list of holders that are currently being animated by the decorated ItemAnimator
+	// they may be pending or running
+	private val animatingHolders = object {
+		val appearing = HashSet<ViewHolder>()
+		val changing = HashSet<ViewHolder>()
+		val disappearing = HashSet<ViewHolder>()
+		val persisting = HashSet<ViewHolder>()
 	}
 
-	final override fun animateAppearance(viewHolder: ViewHolder, preLayoutInfo: ItemHolderInfo?, postLayoutInfo: ItemHolderInfo)
-			= decorated.animateAppearance(viewHolder, preLayoutInfo, postLayoutInfo)
+	val appearAnimationsScheduled get() = animatingHolders.appearing.isNotEmpty()
+	val changeAnimationsScheduled get() = animatingHolders.changing.isNotEmpty()
+	val disappearAnimationsScheduled get() = animatingHolders.disappearing.isNotEmpty()
+	val persistAnimationsScheduled get() = animatingHolders.persisting.isNotEmpty()
 
-	override fun animateChange(oldHolder: ViewHolder, newHolder: ViewHolder, preLayoutInfo: ItemHolderInfo, postLayoutInfo: ItemHolderInfo)
-			= decorated.animateChange(oldHolder, newHolder, preLayoutInfo, postLayoutInfo)
+	init {
+		decorated.setAnimationsFinishedListener { holder ->
+			dispatchAnimationFinished(holder)
 
-	final override fun animateDisappearance(viewHolder: ViewHolder, preLayoutInfo: ItemHolderInfo, postLayoutInfo: ItemHolderInfo?)
-			= decorated.animateDisappearance(viewHolder, preLayoutInfo, postLayoutInfo)
+			//remove holder from the lists of currently animating holders
+			animatingHolders.appearing.remove(holder)
+			animatingHolders.changing.remove(holder)
+			animatingHolders.disappearing.remove(holder)
+			animatingHolders.persisting.remove(holder)
+		}
+	}
 
-	final override fun animatePersistence(viewHolder: ViewHolder, preLayoutInfo: ItemHolderInfo, postLayoutInfo: ItemHolderInfo)
-			= decorated.animatePersistence(viewHolder, preLayoutInfo, postLayoutInfo)
+	final override fun animateAppearance(viewHolder: ViewHolder, preLayoutInfo: ItemHolderInfo?, postLayoutInfo: ItemHolderInfo): Boolean {
+		animatingHolders.appearing.add(viewHolder)
+		return decorated.animateAppearance(viewHolder, preLayoutInfo, postLayoutInfo)
+	}
+
+	override fun animateChange(oldHolder: ViewHolder, newHolder: ViewHolder, preLayoutInfo: ItemHolderInfo, postLayoutInfo: ItemHolderInfo): Boolean {
+		animatingHolders.changing.add(oldHolder)
+
+		if(oldHolder != newHolder)
+			animatingHolders.changing.add(newHolder)
+
+		return decorated.animateChange(oldHolder, newHolder, preLayoutInfo, postLayoutInfo)
+	}
+
+	final override fun animateDisappearance(viewHolder: ViewHolder, preLayoutInfo: ItemHolderInfo, postLayoutInfo: ItemHolderInfo?): Boolean {
+		animatingHolders.disappearing.add(viewHolder)
+		return decorated.animateDisappearance(viewHolder, preLayoutInfo, postLayoutInfo)
+	}
+
+	final override fun animatePersistence(viewHolder: ViewHolder, preLayoutInfo: ItemHolderInfo, postLayoutInfo: ItemHolderInfo): Boolean {
+		animatingHolders.appearing.add(viewHolder)
+		return decorated.animatePersistence(viewHolder, preLayoutInfo, postLayoutInfo)
+	}
 
 	final override fun canReuseUpdatedViewHolder(viewHolder: ViewHolder)
 			= decorated.canReuseUpdatedViewHolder(viewHolder)

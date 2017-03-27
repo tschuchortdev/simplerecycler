@@ -88,10 +88,13 @@ open class SimpleRecyclerView
 			super.runPendingAnimations()
 
 			changeAnimations
-					.filter { !it.value.isStarted }
-					.forEach {
-						it.value.start()
-						dispatchAnimationStarted(it.key)
+					.filter { (_, animator) -> !animator.isStarted }
+					.forEach { (holder, animator) ->
+						if(disappearAnimationsScheduled)
+							animator.startDelay = removeDuration
+
+						animator.start()
+						dispatchAnimationStarted(holder)
 					}
 
 			dispatchChangeAnimationsFinished()
@@ -115,14 +118,6 @@ open class SimpleRecyclerView
 
 		override fun canReuseUpdatedViewHolder(holder: ViewHolder, payloads: MutableList<Any>)
 				= canHolderAnimateChanges(holder as RecyclerItem.ViewHolder) || super.canReuseUpdatedViewHolder(holder, payloads)
-
-		override fun setChangeDuration(newChangeDuration: Long) {
-			super.setChangeDuration(newChangeDuration)
-
-			changeAnimations
-					.map { it.value }
-					.forEach { it.duration = changeDuration }
-		}
 
 		private fun canHolderAnimateChanges(holder: RecyclerItem.ViewHolder): Boolean {
 			if(holder.item != null)
