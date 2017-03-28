@@ -39,6 +39,9 @@ open class SimpleRecyclerView
 		fun onChangeAnimationStopped(holder: ViewHolder) {
 			changeAnimations.remove(holder)
 			dispatchAnimationFinished(holder)
+
+			if(changeAnimations.isEmpty())
+				dispatchChangeAnimationsFinished()
 		}
 
 		override fun animateChange(oldHolder: ViewHolder, newHolder: ViewHolder,
@@ -96,8 +99,6 @@ open class SimpleRecyclerView
 						animator.start()
 						dispatchAnimationStarted(holder)
 					}
-
-			dispatchChangeAnimationsFinished()
 		}
 
 		override fun endAnimation(item: ViewHolder) {
