@@ -59,7 +59,7 @@ abstract class ItemAnimatorDecorator(val decorated: ItemAnimator) : ItemAnimator
 		return decorated.animatePersistence(viewHolder, preLayoutInfo, postLayoutInfo)
 	}
 
-	final override fun canReuseUpdatedViewHolder(viewHolder: ViewHolder)
+	override fun canReuseUpdatedViewHolder(viewHolder: ViewHolder)
 			= decorated.canReuseUpdatedViewHolder(viewHolder)
 
 	override fun canReuseUpdatedViewHolder(holder: ViewHolder, payloads: MutableList<Any>)
@@ -119,7 +119,7 @@ abstract class ItemAnimatorDecorator(val decorated: ItemAnimator) : ItemAnimator
 		if(!decorated.isRunning)
 			dispatchAnimationsFinished()
 		else
-			decorated.isRunning { dispatchChangeAnimationsFinished() }
+			decorated.isRunning { dispatchAnimationsFinished() }
 	}
 
 	final override fun setAddDuration(newAddDuration: Long) {
