@@ -46,10 +46,6 @@ abstract class ItemAnimatorDecorator(val decorated: ItemAnimator) : ItemAnimator
 
 	override fun animateChange(oldHolder: ViewHolder, newHolder: ViewHolder, preLayoutInfo: ItemHolderInfo, postLayoutInfo: ItemHolderInfo): Boolean {
 		animatingHolders.changing.add(oldHolder)
-
-		if(oldHolder != newHolder)
-			animatingHolders.changing.add(newHolder)
-
 		return decorated.animateChange(oldHolder, newHolder, preLayoutInfo, postLayoutInfo)
 	}
 
