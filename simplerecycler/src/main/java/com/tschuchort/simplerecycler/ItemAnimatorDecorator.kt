@@ -28,7 +28,7 @@ abstract class ItemAnimatorDecorator(val decorated: ItemAnimator) : ItemAnimator
 	val persistAnimationsScheduled get() = animatingHolders.persisting.isNotEmpty()
 
 	init {
-		decorated.setAnimationsFinishedListener { holder ->
+		decorated.setAnimationFinishedListener { holder ->
 			dispatchAnimationFinished(holder)
 
 			//remove holder from the lists of currently animating holders
@@ -139,7 +139,7 @@ abstract class ItemAnimatorDecorator(val decorated: ItemAnimator) : ItemAnimator
 	}
 }
 
-private fun ItemAnimator.setAnimationsFinishedListener(onAnimationFinished: (ViewHolder) -> Unit) {
+private fun ItemAnimator.setAnimationFinishedListener(onAnimationFinished: (ViewHolder) -> Unit) {
 	val animatorListenerInvocationHandler = InvocationHandler { _, method, args ->
 		if(method.name == "onAnimationFinished") {
 			if(args[0] is ViewHolder)
