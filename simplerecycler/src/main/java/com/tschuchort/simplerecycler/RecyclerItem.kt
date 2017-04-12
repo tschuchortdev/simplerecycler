@@ -2,6 +2,7 @@ package com.tschuchort.simplerecycler
 
 import android.animation.Animator
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 
 
@@ -40,6 +41,17 @@ abstract class RecyclerItem {
 	 */
 	open protected fun unbindViewHolder(holder: ViewHolder) {
 		//intentionally empty
+	}
+
+	/**
+	 * called when the viewholder could not be recycled because of transient state, for example some animation
+	 * that is still running.
+	 *
+	 * @return: true if you have removed the transient state and the holder can now be recycled
+	 */
+	open fun onFailedToRecycleView(holder: ViewHolder): Boolean {
+		Log.e("RecyclerItem", "did not handle onFailedToRecycleView")
+		return false
 	}
 
 	/**

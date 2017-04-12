@@ -79,6 +79,14 @@ open class GenericAdapter
 		// intentionally empty
 	}
 
+	override fun onFailedToRecycleView(holder: RecyclerView.ViewHolder?): Boolean {
+		if (holder is RecyclerItem.ViewHolder) {
+			return holder.item!!.onFailedToRecycleView(holder)
+		}
+		else
+			throw IllegalStateException("onFailedToRecycleView called with ViewHolder of unknown type")
+	}
+
 	override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
 		if (holder is RecyclerItem.ViewHolder) {
 			holder.unbind()
