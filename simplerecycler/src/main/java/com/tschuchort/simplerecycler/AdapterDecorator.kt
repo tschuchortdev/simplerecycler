@@ -27,9 +27,9 @@ open class AdapterDecorator<VH : RecyclerView.ViewHolder>(private val decoratedA
 	override fun getItemViewType(position: Int) = decoratedAdapter.getItemViewType(position)
 
 
-	override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
-		super.onAttachedToRecyclerView(recyclerView)
-		decoratedAdapter.onAttachedToRecyclerView(recyclerView)
+	override fun onAttachedToRecyclerView(recycler: RecyclerView?) {
+		super.onAttachedToRecyclerView(recycler)
+		decoratedAdapter.onAttachedToRecyclerView(recycler)
 	}
 
 	override fun onBindViewHolder(holder: VH, position: Int)
@@ -38,9 +38,9 @@ open class AdapterDecorator<VH : RecyclerView.ViewHolder>(private val decoratedA
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
 			= decoratedAdapter.onCreateViewHolder(parent, viewType)
 
-	override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
-		super.onDetachedFromRecyclerView(recyclerView)
-		decoratedAdapter.onDetachedFromRecyclerView(recyclerView)
+	override fun onDetachedFromRecyclerView(recycler: RecyclerView?) {
+		super.onDetachedFromRecyclerView(recycler)
+		decoratedAdapter.onDetachedFromRecyclerView(recycler)
 	}
 
 	override fun onFailedToRecycleView(holder: VH?)

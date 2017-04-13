@@ -1,16 +1,17 @@
 package com.tschuchort.simplerecyclerexample
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import butterknife.bindView
 import com.tschuchort.simplerecycler.GenericAdapter
 import com.tschuchort.simplerecycler.RecyclerItem
-import com.tschuchort.simplerecycler.SimpleRecyclerView
 
 class MainActivity : AppCompatActivity(), GenericAdapter.OnClickListener, GenericAdapter.OnLongClickListener {
 
-	val recycler: SimpleRecyclerView by bindView(R.id.recycler)
+	val recycler: RecyclerView by bindView(R.id.recycler)
 	lateinit var adapter: GenericAdapter
 
 	override fun onCreate(savedInstanceState: Bundle?) {

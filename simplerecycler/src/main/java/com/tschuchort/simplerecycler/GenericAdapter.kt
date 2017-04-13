@@ -42,6 +42,25 @@ open class GenericAdapter
 	 */
 	final override fun setHasStableIds(hasStableIds: Boolean) = super.setHasStableIds(hasStableIds)
 
+	override fun onAttachedToRecyclerView(recycler: RecyclerView) {
+		super.onAttachedToRecyclerView(recycler)
+
+		// attach our item animator decorator to the recycler view
+		if(recycler.itemAnimator !is ItemChangeAnimationDelegator)
+			recycler.itemAnimator = ItemChangeAnimationDelegator(recycler.itemAnimator)
+	}
+
+	override fun onDetachedFromRecyclerView(recycler: RecyclerView) {
+		super.onDetachedFromRecyclerView(recycler)
+
+		// remove out item animator decorator so there are no problems when user attaches a different adapter
+		if(recycler.itemAnimator is ItemChangeAnimationDelegator)
+			recycler.itemAnimator = (recycler.itemAnimator as ItemChangeAnimationDelegator).decorated
+
+		// stop all background tasks or they might try to access unavailable resources
+		diffDataDelegate.stopBackgroundTasks()
+	}
+
 	fun saveViewHolderFactoriesOf(newItems: List<RecyclerItem>) {
 		newItems.filter { !mViewHolderFactories.containsKey(it.viewTypeId) }
 				.forEach { mViewHolderFactories.put(it.viewTypeId, it.viewHolderFactory) }
@@ -167,13 +186,6 @@ open class GenericAdapter
 	fun addOnLongClickListener(listener: OnLongClickListener) = mLongClickListeners.add(listener)
 
 	fun removeOnLongClickListener(listener: OnLongClickListener) = mLongClickListeners.remove(listener)
-
-	override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-		super.onDetachedFromRecyclerView(recyclerView)
-
-		//stop all background tasks or they might try to access unavailable resources
-		diffDataDelegate.stopBackgroundTasks()
-	}
 
 	@FunctionalInterface
 	interface OnClickListener {
